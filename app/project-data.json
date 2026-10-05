@@ -1,0 +1,44 @@
+{
+  "projects": [
+    {
+      "name": "Contributor Hub",
+      "owner": "Mona Patel",
+      "status": "active",
+      "recentActivity": "Pilot feedback is being folded into the navigation refresh.",
+      "priority": "high",
+      "summary": "A shared home for contributor guides, templates, and team updates."
+    },
+    {
+      "name": "API Reliability",
+      "owner": "Jordan Lee",
+      "status": "at-risk",
+      "recentActivity": "The load-test run found a timeout on the notifications endpoint.",
+      "priority": "urgent",
+      "summary": "Reduce service interruptions with better observability and resilient retries."
+    },
+    {
+      "name": "Design System Refresh",
+      "owner": "Avery Chen",
+      "status": "active",
+      "recentActivity": "The accessible form patterns are ready for contributor review.",
+      "priority": "medium",
+      "summary": "Bring shared interface patterns and documentation into one reliable toolkit."
+    },
+    {
+      "name": "Onboarding Sprint",
+      "owner": "Sam Rivera",
+      "status": "planned",
+      "recentActivity": "Kickoff workshop is scheduled for next Tuesday.",
+      "priority": "medium",
+      "summary": "Make the first-week experience clearer for new contributors."
+    },
+    {
+      "name": "Quarterly Impact Report",
+      "owner": "Priya Nair",
+      "status": "completed",
+      "recentActivity": "The final report was shared with the team on Friday.",
+      "priority": "low",
+      "summary": "Turn project outcomes and learnings into a concise quarterly readout."
+    }
+  ]
+}

@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Project Pulse</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="dashboard">
+      <header class="dashboard-header">
+        <p class="eyebrow">Team overview</p>
+        <h1>Project Pulse</h1>
+        <p class="dashboard-summary">A quick read on what contributors are building, where help is needed, and what is coming next.</p>
+      </header>
+
+      <section aria-labelledby="projects-heading">
+        <h2 id="projects-heading">Projects</h2>
+        <p id="loading-state" class="loading" role="status">Loading project updates…</p>
+        <p id="error-state" class="error-state" role="alert" hidden>Project updates could not be loaded. Please try again later.</p>
+        <p id="empty-state" class="loading" role="status" hidden>No projects are available yet.</p>
+        <div id="project-grid" class="project-grid" aria-live="polite"></div>
+      </section>
+
+      <aside class="legend" aria-label="Dashboard guide">
+        <span>Status shows project momentum.</span>
+        <span>Priority highlights where attention may be useful.</span>
+      </aside>
+    </main>
+
+    <script>
+      (() => {
+        const grid = document.querySelector("#project-grid");
+        const loadingState = document.querySelector("#loading-state");
+        const errorState = document.querySelector("#error-state");
+        const emptyState = document.querySelector("#empty-state");
+
+        const setState = (state) => {
+          loadingState.hidden = state !== "loading";
+          errorState.hidden = state !== "error";
+          emptyState.hidden = state !== "empty";
+        };
+
+        const createText = (tagName, className, text) => {
+          const element = document.createElement(tagName);
+          element.className = className;
+          element.textContent = text;
+          return element;
+        };
+
+        const createBadge = (className, value, label) => {
+          const badge = createText("span", className, `${label}: ${value}`);
+          badge.dataset[className === "status-badge" ? "status" : "priority"] = value.toLowerCase().replace(/\s+/g, "-");
+          return badge;
+        };
+
+        const createProjectCard = (project) => {
+          const card = document.createElement("article");
+          const status = String(project.status || "unknown");
+          const priority = String(project.priority || "unspecified");
+          card.className = "project-card";
+          card.dataset.status = status.toLowerCase().replace(/\s+/g, "-");
+          card.dataset.priority = priority.toLowerCase().replace(/\s+/g, "-");
+
+          const header = document.createElement("header");
+          header.className = "project-card__header";
+          const titleGroup = document.createElement("div");
+          titleGroup.append(
+            createText("h3", "project-card__title", String(project.name || "Unnamed project")),
+            createText("span", "project-card__owner", `Owner: ${String(project.owner || "Unassigned")}`)
+          );
+          const statusBadge = createBadge("status-badge", status, "Status");
+          header.append(titleGroup, statusBadge);
+
+          const meta = document.createElement("div");
+          meta.className = "card-meta";
+          meta.append(createBadge("priority-badge", priority, "Priority"));
+
+          const summary = createText("p", "project-card__summary", String(project.summary || "Project details are being gathered."));
+          const activity = document.createElement("p");
+          activity.className = "project-card__activity";
+          activity.append(
+            createText("span", "project-card__activity-label", "Recent activity"),
+            document.createTextNode(String(project.recentActivity || "No recent activity reported."))
+          );
+
+          card.append(header, meta, summary, activity);
+          return card;
+        };
+
+        fetch("project-data.json")
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`Project data request failed with ${response.status}`);
+            }
+            return response.json();
+          })
+          .then((data) => {
+            if (!data || !Array.isArray(data.projects)) {
+              throw new Error("Project data does not contain a projects array");
+            }
+            if (data.projects.length === 0) {
+              setState("empty");
+              return;
+            }
+            data.projects.forEach((project) => grid.append(createProjectCard(project)));
+            setState("ready");
+          })
+          .catch((error) => {
+            console.error(error);
+            setState("error");
+          });
+      })();
+    </script>
+  </body>
+</html>
